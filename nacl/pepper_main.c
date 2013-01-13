@@ -30,6 +30,8 @@
 #include "ruby/ruby.h"
 #include "version.h"
 #include "gc.h"
+#include "internal.h"
+#include "vm_core.h"
 
 #ifdef HAVE_STRUCT_PPB_CORE
 typedef struct PPB_Core PPB_Core;
@@ -425,9 +427,14 @@ pruby_eval(void* data)
   struct PepperInstance* const instance = (struct PepperInstance*)data;
   volatile VALUE src = (VALUE)instance->async_call_args;
   volatile VALUE result = Qnil;
+  volatile VALUE exception = Qnil;
+  volatile VALUE inspect = Qnil;
+  volatile VALUE backtrace = Qnil;
   volatile int state;
 
   RUBY_INIT_STACK;
+  Init_native_thread();
+  ruby_thread_init_stack(GET_THREAD());
 
   if (pthread_mutex_lock(&instance->mutex)) {
     perror("pepper-ruby:pthread_mutex_lock");
@@ -446,10 +453,20 @@ pruby_eval(void* data)
       return NULL;
   }
   else {
-      rb_set_errinfo(Qnil);
-      instance->async_call_args =
+      exception = rb_gv_get("$!");
+      if (RTEST(exception))
+      {
+        inspect = rb_inspect(exception);
+        backtrace = rb_funcall(
+                exception, rb_intern("backtrace"), 0);
+      }
+      
+      result =
           rb_str_concat(rb_usascii_str_new_cstr("error:"),
-                        rb_obj_as_string(result));
+                        rb_obj_as_string(inspect));
+      instance->async_call_args = 
+          rb_str_concat(rb_obj_as_string(result),
+                        rb_obj_as_string(backtrace));
       core_interface->CallOnMainThread(
           0, PP_MakeCompletionCallback(pruby_post_value, instance), 0);
       return NULL;
@@ -861,7 +878,7 @@ rb_load_file(const char *path)
   }
   else if (RB_TYPE_P(instance->async_call_result.as_value, T_STRING)) {
     VALUE str = instance->async_call_result.as_value;
-    extern void* rb_compile_cstr(const char *f, const char *s, int len, int line);
+    
     return rb_compile_cstr(path, RSTRING_PTR(str), RSTRING_LEN(str), 0);
   }
   else {

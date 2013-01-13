@@ -626,6 +626,9 @@ ruby_init_stack(volatile VALUE *addr
 	get_stack(&stackaddr, &size);
 	space = STACK_DIR_UPPER((char *)addr - (char *)stackaddr, (char *)stackaddr - (char *)addr);
 	native_main_thread.stack_maxsize = size - space;
+    if (size > 0)
+        native_main_thread.stack_start = stackaddr;
+    
 #elif defined(HAVE_GETRLIMIT)
 	int pagesize = getpagesize();
 	struct rlimit rlim;
