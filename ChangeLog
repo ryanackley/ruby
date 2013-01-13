@@ -1,3 +1,155 @@
+Sun Jan 13 15:00:00 2013  Kenta Murata  <mrkn@mrkn.jp>
+
+	* ext/bigdecimal/bigdecimal.c (BigDecimal_sub):
+	  need to specify precision for converting Rational and Float.
+	  [ruby-dev:46544] [Bug #7404]
+
+	* ext/bigdecimal/bigdecimal.c (BigDecimal_mult): ditto.
+
+	* ext/bigdecimal/bigdecimal.c (BigDecimal_divide): ditto.
+
+	* ext/bigdecimal/bigdecimal.c (BigDecimal_DoDivmod): ditto.
+
+	* ext/bigdecimal/bigdecimal.c (BigDecimal_divremain): ditto.
+
+	* test/bigdecimal/test_bigdecimal.rb: add tests for the above fixes.
+
+Sun Jan 13 14:48:55 2013  Marc-Andre Lafortune  <ruby-core@marc-andre.ca>
+
+	* lib/matrix/eigenvalue_decomposition: Fix eigensystem with complex
+	  eigenvectors. Patch by pypypy567.
+	  [Bug #7208] [ruby-dev:46251] [rubyspec:242f8e55bd]
+
+    * lib/matrix/lup_decomposition.rb: Fix error for rectangular matrices
+      [bug#7620] [ruby-core:51118] [rubyspec:41f833ee2]
+
+Sun Jan 13 14:06:00 2013  Zachary Scott  <zachary@zacharyscott.net>
+
+	* lib/irb.rb, lib/prime.rb: Typos in overview
+	  Patch by Ershad K [Github Fixes #234]
+
+Sun Jan 13 13:40:00 2013  Zachary Scott  <zachary@zacharyscott.net>
+
+	* lib/open3.rb : Typo in Open3 overview. Patch by zed_0xff
+	  [Github Fixes #233]
+
+Sat Jan 12 17:42:00 2013  Kenta Murata  <mrkn@cookpad.com>
+
+	* numeric.c (do_coerce): fix for the exceptions which the coerce
+	  method raises.  The optimization done by r38756 is preserved.
+	  [Bug #7645] [ruby-core:51213]
+
+Sat Jan 12 16:12:46 2013  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* win32/setup.mak (-runtime-): see msvcrt from link header on mswin
+	  instead of running testing executable file, for cross compiling.
+
+Sat Jan 12 08:58:47 2013  Aaron Patterson <aaron@tenderlovemaking.com>
+
+	* ext/psych/lib/psych/visitors/to_ruby.rb: merge key values that
+	  contain something besides a hash should be left in tact.
+
+	* test/psych/test_merge_keys.rb: test for change
+
+Sat Jan 12 07:52:47 2013  Masaki Suketa <masaki.suketa@nifty.ne.jp>
+
+	* ext/win32ole/win32ole.c (ole_set_byref): support VT_UI8|VT_BYREF,
+	  VT_I8|VT_BYREF in cygwin and mingw.
+
+	* ext/win32ole/win32ole.c (ole_variant2val): ditto.
+
+	* test/win32ole/test_win32ole_variant.rb (test_s_new_with_i8_byref):
+	  ditto.
+
+	* test/win32ole/test_win32ole_variant.rb (test_s_new_with_ui8_byref):
+	  ditto.
+
+Sat Jan 12 02:45:00 2013  Zachary Scott  <zachary@zacharyscott.net>
+
+	* man/ruby.1 (options): include --*-encoding from r38784
+
+Fri Jan 11 23:34:48 2013  Kazuhiro NISHIYAMA  <zn@mbf.nifty.com>
+
+	* ruby.c (usage): sort --*-encoding in help. (same order of -E)
+
+Fri Jan 11 16:56:29 2013  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* tool/mkconfig.rb: use configured libdir value to fix
+	  --enable-load-relative on systems where libdir is not default value,
+	  overridden in config.site files.  [ruby-core:47267] [Bug #6903]
+
+Fri Jan 11 11:59:32 2013  NARUSE, Yui  <naruse@ruby-lang.org>
+
+	* string.c (dispose_string): use rb_str_free for freeing string in
+	  parse.y. by Sokolov Yura <funny.falcon@gmail.com>
+	  https://github.com/ruby/ruby/pull/87 fix GH-87
+
+Fri Jan 11 09:56:22 2013  Shugo Maeda  <shugo@ruby-lang.org>
+
+	* insns.def (defineclass): private constants should not be accessed
+	  by scoped module definitions.  The bug was introduced in r38495.
+
+	* test/ruby/test_module.rb: related test.
+
+Fri Jan 11 02:11:59 2013  Shugo Maeda  <shugo@ruby-lang.org>
+
+	* lib/rbconfig/obsolete.rb (respond_to_missing?): use send because
+	  RbConfig.respond_to_missing? is now private.
+
+Thu Jan 10 22:00:58 2013  Koichi Sasada  <ko1@atdot.net>
+
+	* vm_core.h (VM_DEBUG_BP_CHECK): set 0 as default.
+	  This flag specifies checking BP consistency on each frame popping.
+	  Now, we don't have any trouble on it, so I remove it.
+	  If you feel any bugs about VM execution, then set it to 1.
+
+Thu Jan 10 21:03:05 2013 TAKANO `takano32' Mitsuhiro <tak@no32.tk>
+
+	* cont.c: define FIBER_USE_NATIVE as 0 in ia64.
+
+Thu Jan 10 19:39:05 2013  TAKANO `takano32' Mitsuhiro <tak@no32.tk>
+
+	* thread.c: fix RB_GC_SAVE_MACHINE_REGISTER_STACK define for ia64.
+
+Thu Jan 10 17:45:39 2013  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* Makefile.in, win32/Makefile.sub ($(MKFILES)): continue if Makefile
+	  unchanged.
+
+Thu Jan 10 16:31:20 2013  Shugo Maeda  <shugo@ruby-lang.org>
+
+	* vm_insnhelper.c (vm_search_super_method): raise a TypeError
+	  instead of a NotImplementedError if self is not an instance of the
+	  current class.  [ruby-dev:39772] [Bug #2402]
+
+Thu Jan 10 16:47:18 2013  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* ext/tk/extconf.rb (find_tcltk_header): use have_header instead of
+	  try_cpp, which is incredibly slow with VC.
+
+Thu Jan 10 15:55:28 2013  Shugo Maeda  <shugo@ruby-lang.org>
+
+	* numeric.c (do_coerce): remove an unused variable.
+
+Thu Jan 10 15:35:55 2013  Shugo Maeda  <shugo@ruby-lang.org>
+
+	* tool/gen_dummy_probes.rb: remove comments in probes.d to fix the
+	  compilation error introduced by r38755.
+
+Thu Jan 10 11:15:04 2013  Kenta Murata  <mrkn@cookpad.com>
+
+	* numeric.c (do_coerce): speed optimization by using rb_check_funcall
+	  instead of rb_rescue + rb_funcall.
+	  This fix is based on the patch by Benoit Daloze.
+	  [Bug #7645] [ruby-core:51213]
+
+Thu Jan 10 11:15:04 2013  Aaron Patterson <aaron@tenderlovemaking.com>
+
+	* probes.d: updating probes to be more symmetrical, adding
+	  documentation.
+
+	* load.c: ditto
+
 Thu Jan 10 04:23:07 2013  Aaron Patterson <aaron@tenderlovemaking.com>
 
 	* ext/psych/lib/psych/scalar_scanner.rb: strip trailing dots from
@@ -18,7 +170,7 @@ Thu Jan 10 03:29:55 2013  Koichi Sasada  <ko1@atdot.net>
 
 	* compile.c (compile_array_): modify wrong optimization.
 	  A script "[print(1)]; print(2)" should output "12".
-	  However, the compiler had eliminted "[print(1)]" expression
+	  However, the compiler had eliminated "[print(1)]" expression
 	  because it is void expression (unused array).
 	  Of course, side-effect should be remained.
 	  This issue is reported by Masaya Tarui.
@@ -355,17 +507,17 @@ Thu Jan  3 14:32:47 2013  Yuki Yugui Sonoda  <yugui@yugui.jp>
 	* thread_pthread.c (rb_reserved_fd_p): USE_SLEEPY_TIMER_THREAD is
 	  always defined.  Fixes compilation error for NativeClient.
 
-Wed Jan 02 03:09:00 2012  Zachary Scott  <zachary@zacharyscott.net>
+Wed Jan 02 03:09:00 2013  Zachary Scott  <zachary@zacharyscott.net>
 
 	* ext/zlib/zlib.c (Zlib::GzipReader): Fix typo by zed_0xff
 	  [Fixes Github #229]
 
-Wed Jan 02 02:29:00 2012  Zachary Scott  <zachary@zacharyscott.net>
+Wed Jan 02 02:29:00 2013  Zachary Scott  <zachary@zacharyscott.net>
 
 	* hash.c (rb_hash_update): Revert documentation from r38672
 	  See: https://github.com/ruby/ruby/pull/228#issuecomment-11791013
 
-Wed Jan 02 02:16:00 2012  Zachary Scott  <zachary@zacharyscott.net>
+Wed Jan 02 02:16:00 2013  Zachary Scott  <zachary@zacharyscott.net>
 
 	* hash.c (rb_hash_update): Documentation for Hash#merge and shallow
 	  copies Patch by Yorick Peterse [Fixes Github #228]

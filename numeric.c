@@ -227,6 +227,7 @@ coerce_rescue(VALUE *x)
 	     RSTRING_PTR(v):
 	     rb_obj_classname(x[1]),
 	     rb_obj_classname(x[0]));
+
     return Qnil;		/* dummy */
 }
 
@@ -238,7 +239,14 @@ do_coerce(VALUE *x, VALUE *y, int err)
 
     a[0] = *x; a[1] = *y;
 
-    ary = rb_rescue(coerce_body, (VALUE)a, err?coerce_rescue:0, (VALUE)a);
+    if (!rb_respond_to(*y, id_coerce)) {
+	if (err) {
+	    coerce_rescue(a);
+	}
+	return FALSE;
+    }
+
+    ary = rb_rescue(coerce_body, (VALUE)a, err ? coerce_rescue : 0, (VALUE)a);
     if (!RB_TYPE_P(ary, T_ARRAY) || RARRAY_LEN(ary) != 2) {
 	if (err) {
 	    rb_raise(rb_eTypeError, "coerce must return [x, y]");
